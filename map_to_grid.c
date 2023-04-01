@@ -29,7 +29,6 @@ void	first_two_lines(t_Map *m, char *path)
 	fd = open(path, O_RDONLY);
 	while (read(fd, &buffer, 1) && line < 2)
 	{
-//		printf("m->info_line = %i, m->width = %i\n", m->info_line, m->width);
 		if (buffer == '\n')
 			line++;
 		else
@@ -53,6 +52,7 @@ void	read_info_line(t_Map *m)
 	char	buffer;
 	char	*line;
 
+	i = 0;
 	line = malloc(sizeof(char) * m->info_line);
 	fd = open(m->path, O_RDONLY);
 	while (read(fd, &buffer, 1) && (buffer != '\n'))
@@ -76,111 +76,55 @@ void	read_info_line(t_Map *m)
 void	verify_map_size(t_Map *m)
 {
 	int		fd;
-	int		line_n;
 	int		curr_width;
 	char	buffer;
 
-	line_n = 0;
+	m->y = 0;
 	curr_width = 0;
 	fd = open(m->path, O_RDONLY);
 	while (read(fd, &buffer, 1))
 	{
-		write(1, &buffer, 1);
-		if (line_n != 0)
+	//	write(1, &buffer, 1);
+		if (m->y != 0)
 			curr_width++;
 		if (buffer == '\n')
 		{
-//			printf("curr_width = %i, m->width = %i\n", curr_width, m->width);
-			if ((line_n != 0) && (curr_width != m->width - 1))
+	//		printf("curr_width = %i, m->width = %i\n", curr_width, m->width);
+			if ((m->y != 0) && (curr_width != m->width + 1))
 				ft_err_msg(2);
 			curr_width = 0;
-			line_n++;
+			m->y++;
 		}
 	}
-	if (line_n != (m->height - 1))
+//	printf("m->y = %i, m->height = %i\n", m->y, m->height);
+	if (m->y != (m->height + 1))
 		ft_err_msg(2);
 	close(fd);
 }
-/*Receive a struct containing a VALID map_str.
- *Assign height and symbols to p.height, p.empty, p.obst, p.full
- *Assign empty grid to p.map_grid. */
-/*t_Map	create_grid(t_Map *p)
-{
-	int	width;
 
-	p->x = 0;
-	while (p->map_str[p->x] != '\n')
-		p->x++;
-	p->x++;
-	p->map_str += p->x;
-	width = 1;
-	while (p->map_str[p->x++] != '\n')
-		width++;
-	p->grid = malloc(sizeof(char *) * p->height);
-	p->y = 0;
-	while (p->y < p->height)
-	{
-		p->grid[p->y] = malloc(sizeof (char) * (width + 1));
-		p->y++;
-	}
-	return (p);
-}
-*/
-/* Pick up where create_grid left off. Advance map pointer to first 'map' line.
- * Move through grid, assigning values line by line */
-t_Map	fill_grid(t_Map p)
-{	
-	p.x = 0;
-	while (*p.map_str)
-	{
-		p.y = 0;
-		while (*p.map_str != '\n' && *p.map_str)
-		{
-			p.grid[p.x][p.y] = *p.map_str++;
-			p.y++;
-		}
-		p.grid[p.x][p.y] = '\0';
-		p.x++;
-		p.map_str++;
-	}
-	return (p);
-}
-
-/*Prints grid. Requires height as parameter!*/
-void	print_grid(t_Map p)
+void	map_to_grid(t_Map *map, char *path)
 {
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
-	while (i < p.height)
-	{
-		while (p.grid[i][j])
-			write(1, &p.grid[i][j++], 1);
-		write(1, "\n", 1);
-		j = 0;
-		i++;
-	}
-}
-/*
-void	map_to_grid(char *path)
-{
+	first_two_lines(map, path);
+	read_info_line(map);
+	verify_map_size(map);
+	create_grid(map);
+	fill_grid(map);
 	return ;
 }
-*/
+
 int	main(void)
 {
 	t_Map	map;
 
-	first_two_lines(&map, "mapfile");
-	read_info_line(&map);
-//	verify_map_size(&map);
-	printf("Empty = %c\n", map.empty);
-	printf("Obst = %c\n", map.obst);
-	printf("Full = %c\n", map.full);
+	map_to_grid(&map, "mapfile");
+	print_grid(&map);
+	
+//	printf("Empty = %c\n", map.empty);
+//	printf("Obst = %c\n", map.obst);
+//	printf("Full = %c\n", map.full);
 //	solve(map);
-//	print_grid(map);
+
 //	print_solution(map);
+	free(map.grid);
 	return (0);
 }

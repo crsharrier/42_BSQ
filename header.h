@@ -33,11 +33,17 @@ typedef struct t_Map
 	int		max_y;
 }	t_Map;
 
-//void	print_solution(t_Map p);
+//void	print_solution(t_Map m);
+
+void	free_memory(t_Map *map);
 
 void	ft_err_msg(int msg_id);
 
-//void	print_grid(t_Map p);
+void	print_grid(t_Map *m);
+
+void	create_grid(t_Map *m);
+
+void	fill_grid(t_Map *m);
 
 //int		solution_check(t_Map p, int i, int j);
 
@@ -47,7 +53,7 @@ int		ft_atoi(char *num, int size);
 
 //t_Map	validate_map(t_Map p);
 
-t_Map	map_to_grid(char *path);
+void	map_to_grid(t_Map *map, char *path);
 
 //t_Map	solve(t_Map p);
 

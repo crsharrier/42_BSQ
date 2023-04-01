@@ -43,38 +43,6 @@ int	ft_atoi(char *num, int size)
 	return (total);
 }
 
-int	solution_check(t_Map p, int i, int j)
-{
-	if (j < p.solution[1] || j > (p.solution[1] + p.solution[2]))
-		return (0);
-	if (i < p.solution[0] || i > (p.solution[0] + p.solution[2]))
-		return (0);
-	return (1);
-}
-
-/*Prints SOLUTION grid. Requires height as parameter!*/
-void	print_solution(t_Map p)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
-	while (i < p.height)
-	{
-		while (p.grid[i][j])
-		{
-			if (solution_check(p, i, j))
-				write(1, &p.full, 1);
-			else
-				write(1, &p.grid[i][j], 1);
-			j++;
-		}
-		write(1, "\n", 1);
-		j = 0;
-		i++;
-	}
-}
 /*
 int	main(void)
 {
