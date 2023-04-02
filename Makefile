@@ -8,9 +8,10 @@ all:
 
 clean:
 	rm -f $(NAME)
+	rm -f 
 
 debug:
-	all -g
+	gcc $(CFLAGS) -g $(SRCS) $(HEADER) -o $(NAME)
 
 .PHONY:	all clean fclean debug
 

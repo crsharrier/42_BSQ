@@ -15,9 +15,8 @@
 #include <fcntl.h>
 #include "header.h"
 
-/*Receive a struct containing a VALID map_str.
- *Assign height and symbols to p.height, p.empty, p.obst, p.full
- *Assign empty grid to p.map_grid. */
+/*Receive a struct containing a valid height and width.
+ *Assign empty grid to m->map_grid. */
 void	create_grid(t_Map *m)
 {
 	//printf("m->height = %i, m->width = %i\n", m->height, m->width);
@@ -32,6 +31,8 @@ void	create_grid(t_Map *m)
 	}
 }
 
+/*Once empty grid has been created, fill it with appropriate
+empty and obst symbols. */
 void	fill_grid(t_Map *m)
 {
 	int fd;
@@ -44,13 +45,11 @@ void	fill_grid(t_Map *m)
 	{
 		if (m->y)
 		{
-		//	write(1, &buffer, 1);
 			m->grid[m->y - 1][m->x] = buffer;
 			m->x++;
 		}
 		if (buffer == '\n')
 		{
-	//		m->grid[m->y - 1][m->x] = '\0';
 			m->x = 0;
 			m->y++;
 		}
@@ -58,7 +57,7 @@ void	fill_grid(t_Map *m)
 	close(fd);
 }
 
-/*Prints grid*/
+/*Print input grid. (Mainly for testing purposes)
 void	print_grid(t_Map *m)
 {
 	int	i;
@@ -70,39 +69,37 @@ void	print_grid(t_Map *m)
 		j = 0;
 		while (m->grid[i][j])
 			write(1, &m->grid[i][j++], 1);
-	//	write(1, "\n", 1);
 		i++;
 	}
-}
+}*/
 
-int	solution_check(t_Map p, int i, int j)
+int	solution_check(t_Map *m, int i, int j)
 {
-	if (j < p.solution[1] || j > (p.solution[1] + p.solution[2]))
+	if (i < m->solution[1] || i > (m->solution[1] + m->solution[2]))
 		return (0);
-	if (i < p.solution[0] || i > (p.solution[0] + p.solution[2]))
+	if (j < m->solution[0] || j > (m->solution[0] + m->solution[2]))
 		return (0);
 	return (1);
 }
 
-/*Prints SOLUTION grid. Requires height as parameter!*/
-void	print_solution(t_Map m)
+/*Print SOLUTION grid.*/
+void	print_solution(t_Map *m)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	j = 0;
-	while (i < m.height)
+	while (i < m->height)
 	{
-		while (m.grid[i][j])
+		j = 0;
+		while (m->grid[i][j])
 		{
 			if (solution_check(m, i, j))
-				write(1, &m.full, 1);
+				write(1, &m->full, 1);
 			else
-				write(1, &m.grid[i][j], 1);
+				write(1, &m->grid[i][j], 1);
 			j++;
 		}
-		write(1, "\n", 1);
 		j = 0;
 		i++;
 	}

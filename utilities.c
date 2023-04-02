@@ -43,6 +43,14 @@ int	ft_atoi(char *num, int size)
 	return (total);
 }
 
+void	free_memory(t_Map *map)
+{
+	if (map->grid)
+		free(map->grid);
+	if (map->std_in)
+		free(map->std_in);
+}
+
 /*
 int	main(void)
 {

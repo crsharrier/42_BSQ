@@ -15,7 +15,7 @@
 #include <fcntl.h>
 #include "header.h"
 
-/*Find length of info line and length of first map line*/
+/*Find length of info line and length of first map line (width)*/
 void	first_two_lines(t_Map *m, char *path)
 {
 	char	buffer;
@@ -52,6 +52,7 @@ void	read_info_line(t_Map *m)
 	char	buffer;
 	char	*line;
 
+	digits = 0;
 	i = 0;
 	line = malloc(sizeof(char) * m->info_line);
 	fd = open(m->path, O_RDONLY);
@@ -84,19 +85,16 @@ void	verify_map_size(t_Map *m)
 	fd = open(m->path, O_RDONLY);
 	while (read(fd, &buffer, 1))
 	{
-	//	write(1, &buffer, 1);
 		if (m->y != 0)
 			curr_width++;
 		if (buffer == '\n')
 		{
-	//		printf("curr_width = %i, m->width = %i\n", curr_width, m->width);
 			if ((m->y != 0) && (curr_width != m->width + 1))
 				ft_err_msg(2);
 			curr_width = 0;
 			m->y++;
 		}
 	}
-//	printf("m->y = %i, m->height = %i\n", m->y, m->height);
 	if (m->y != (m->height + 1))
 		ft_err_msg(2);
 	close(fd);
@@ -111,7 +109,7 @@ void	map_to_grid(t_Map *map, char *path)
 	fill_grid(map);
 	return ;
 }
-
+/*
 int	main(void)
 {
 	t_Map	map;
@@ -122,9 +120,9 @@ int	main(void)
 //	printf("Empty = %c\n", map.empty);
 //	printf("Obst = %c\n", map.obst);
 //	printf("Full = %c\n", map.full);
-//	solve(map);
+//	solve(&map);
 
 //	print_solution(map);
 	free(map.grid);
 	return (0);
-}
+}*/
