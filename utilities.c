@@ -45,10 +45,19 @@ int	ft_atoi(char *num, int size)
 
 void	free_memory(t_Map *map)
 {
-	if (map->grid)
+	if (map->grid != NULL)
 		free(map->grid);
-	if (map->std_in)
+	if (
+		map->std_in != NULL)
 		free(map->std_in);
+	if 	(map->fd)
+		close(map->fd);
+}
+
+void	init_memory(t_Map *map)
+{
+	map->grid = NULL;
+	map->std_in = NULL;
 }
 
 /*

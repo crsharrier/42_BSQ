@@ -15,7 +15,7 @@
 typedef struct t_Map
 {
 	char	*path;
-//	char	*map_str;
+	char	*line;
 	char	*std_in;
 	char	**grid;
 	char	empty;
@@ -25,6 +25,7 @@ typedef struct t_Map
 	int		height;
 	int		width;
 	int		info_line;
+	int		fd;
 //	int		linenb;
 //	int		i;
 //	int		j;
@@ -36,9 +37,11 @@ typedef struct t_Map
 
 void	print_solution(t_Map *m);
 
+void	init_memory(t_Map *map);
+
 void	free_memory(t_Map *map);
 
-void	ft_err_msg(int msg_id);
+int		ft_err_msg(int msg_id);
 
 //void	print_grid(t_Map *m);
 
@@ -54,7 +57,7 @@ int		ft_atoi(char *num, int size);
 
 //t_Map	validate_map(t_Map p);
 
-void	map_to_grid(t_Map *map, char *path);
+int		map_to_grid(t_Map *map, char *path);
 
 void	solve(t_Map *m);
 

@@ -19,15 +19,14 @@
 void	first_two_lines(t_Map *m, char *path)
 {
 	char	buffer;
-	int		fd;
 	int		line;
 
 	m->info_line = 0;
 	m->width = 0;
 	m->path = path;
 	line = 0;
-	fd = open(path, O_RDONLY);
-	while (read(fd, &buffer, 1) && line < 2)
+	m->fd = open(path, O_RDONLY);
+	while (read(m->fd, &buffer, 1) && line < 2)
 	{
 		if (buffer == '\n')
 			line++;
@@ -39,75 +38,74 @@ void	first_two_lines(t_Map *m, char *path)
 				m->width++;
 		}
 	}
-	close(fd);
+	close(m->fd);
 }
 
 /*Read length and full, empty and obst symbols from info line. If info
 line is incorrect length, ft_err_msg(2) */
-void	read_info_line(t_Map *m)
+int	read_info_line(t_Map *m)
 {
-	int		fd;
 	int		digits;
 	int		i;
 	char	buffer;
-	char	*line;
 
 	digits = 0;
 	i = 0;
-	line = malloc(sizeof(char) * m->info_line);
-	fd = open(m->path, O_RDONLY);
-	while (read(fd, &buffer, 1) && (buffer != '\n'))
+	m->line = malloc(sizeof(char) * m->info_line);
+	m->fd = open(m->path, O_RDONLY);
+	while (read(m->fd, &buffer, 1) && (buffer != '\n'))
 	{
 		if (is_num(buffer))
 			digits++;
-		line[i] = buffer;
+		m->line[i] = buffer;
 		i++;
 	}
 	if (i != (digits + 3))
-		ft_err_msg(2);
-	m->empty = line[digits];
-	m->obst = line[digits + 1];
-	m->full = line[digits + 2];
-	m->height = ft_atoi(line, digits);
-	free(line);
-	close(fd);
+		return (ft_err_msg(2));
+	m->empty = m->line[digits];
+	m->obst = m->line[digits + 1];
+	m->full = m->line[digits + 2];
+	m->height = ft_atoi(m->line, digits);
+	free(m->line);
+	close(m->fd);
+	return (1);
 }
 
 /*Verify that the map is the correct length and width*/
-void	verify_map_size(t_Map *m)
+int	verify_map_size(t_Map *m)
 {
-	int		fd;
 	int		curr_width;
 	char	buffer;
 
 	m->y = 0;
 	curr_width = 0;
-	fd = open(m->path, O_RDONLY);
-	while (read(fd, &buffer, 1))
+	m->fd = open(m->path, O_RDONLY);
+	while (read(m->fd, &buffer, 1))
 	{
 		if (m->y != 0)
 			curr_width++;
 		if (buffer == '\n')
 		{
 			if ((m->y != 0) && (curr_width != m->width + 1))
-				ft_err_msg(2);
+				return (ft_err_msg(2));
 			curr_width = 0;
 			m->y++;
 		}
 	}
 	if (m->y != (m->height + 1))
-		ft_err_msg(2);
-	close(fd);
+		return (ft_err_msg(2));
+	close(m->fd);
+	return (1);
 }
 
-void	map_to_grid(t_Map *map, char *path)
+int	map_to_grid(t_Map *map, char *path)
 {
 	first_two_lines(map, path);
-	read_info_line(map);
-	verify_map_size(map);
+	if (!(read_info_line(map) && (verify_map_size(map))))
+		return (0);
 	create_grid(map);
 	fill_grid(map);
-	return ;
+	return (1);
 }
 /*
 int	main(void)

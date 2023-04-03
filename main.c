@@ -16,13 +16,13 @@
 
 /*Write an error message and 
 exit the program immediately*/
-void	ft_err_msg(int msg_id)
+int	ft_err_msg(int msg_id)
 {
 	if (msg_id == 1)
 		write(1, "Error\n", 6);
 	if (msg_id == 2)
 		write(1, "map error\n", 10);
-	exit(0);
+	return (0);
 }
 
 /*Check if any symbols in the grid are not 
@@ -53,13 +53,13 @@ int	check_symbols2(t_Map *m)
 /*Run above two functions, checking for duplicate
 symbols and invalid characters on the map itself. 
 Also exit if no empty characters are found*/
-void	validate(t_Map *m)
+int	validate(t_Map *m)
 {
 	int	no_empty;
 
 	no_empty = 1;
 	if (check_symbols2(m) != 1)
-		ft_err_msg(2);
+		return (ft_err_msg(2));
 	m->y = 0;
 	while (m->y < m->height)
 	{
@@ -67,7 +67,7 @@ void	validate(t_Map *m)
 		while (m->x < m->width)
 		{
 			if (check_symbols(m) == 0)
-				ft_err_msg(2);
+				return (ft_err_msg(2));
 			if (m->grid[m->y][m->x] == m->empty)
 				no_empty = 0;
 			m->x++;
@@ -75,7 +75,8 @@ void	validate(t_Map *m)
 		m->y++;	
 	}
 	if (no_empty)
-		ft_err_msg(2);
+		return (ft_err_msg(2));
+	return (1);
 }	
 
 int	main(int argc, char **argv)
@@ -98,11 +99,18 @@ int	main(int argc, char **argv)
 	{
 		while (i < argc)
 		{
+			init_memory(&map);
 			map.std_in = malloc(sizeof(char) * 50);
-			map_to_grid(&map, argv[i]);
-			validate(&map);
-			solve(&map);
-			print_solution(&map);
+			if (map_to_grid(&map, argv[i]))
+			{
+				map_to_grid(&map, argv[i]);
+				if (validate(&map))
+				{
+					validate(&map);
+					solve(&map);
+					print_solution(&map);
+				}
+			}
 			free_memory(&map);
 			i++;
 		}
